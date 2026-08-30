@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SONORA — HTML5 аудиостудия</title>
+    <meta name="theme-color" content="#101319" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <header class="topbar">
+        <a class="brand" href="#" aria-label="SONORA — на главную"><span class="brand-mark">S</span><span>SONORA</span></a>
+        <div class="project-name"><span class="status-dot"></span><input value="Новый проект" aria-label="Название проекта" /></div>
+        <div class="top-actions"><button class="icon-button" title="Настройки">⚙</button><button class="export-button" id="exportButton">Экспорт <span>↗</span></button></div>
+      </header>
+
+      <section class="workspace">
+        <aside class="sidebar">
+          <div class="nav-label">СТУДИЯ</div>
+          <button class="nav-item active"><span>⌁</span> Проект</button>
+          <button class="nav-item"><span>◫</span> Библиотека</button>
+          <button class="nav-item"><span>✦</span> Эффекты</button>
+          <div class="sidebar-bottom"><button class="nav-item"><span>?</span> Помощь</button><div class="save-state">● СОХРАНЕНО</div></div>
+        </aside>
+
+        <section class="studio">
+          <div class="studio-head"><div><p class="eyebrow">AUDIO WORKSPACE</p><h1>Микс без лишнего шума.</h1></div><button class="tempo" id="tempoButton">♩ <strong id="tempoValue">120</strong> BPM</button></div>
+          <div class="visualizer-panel">
+            <canvas id="visualizer" aria-label="Визуализация аудио"></canvas>
+            <div class="visualizer-copy"><span class="live-label">● LIVE</span><p id="trackTitle">Готовы к звучанию</p><small id="trackSubtitle">Добавьте файл или включите микрофон</small></div>
+            <button class="upload-button" id="uploadButton">＋ Добавить аудио</button><input id="fileInput" type="file" accept="audio/*" hidden />
+          </div>
+          <div class="transport">
+            <div class="transport-controls"><button class="transport-btn" id="rewindButton" title="В начало">|◀</button><button class="play-button" id="playButton" aria-label="Воспроизвести">▶</button><button class="transport-btn" id="micButton" title="Микрофон">◉</button></div>
+            <div class="timeline"><div class="time-row"><span id="currentTime">00:00</span><span id="totalTime">00:00</span></div><input id="seekBar" type="range" min="0" max="100" value="0" aria-label="Позиция воспроизведения" /></div>
+            <div class="volume"><span>◔</span><input id="volumeControl" type="range" min="0" max="100" value="78" aria-label="Громкость" /></div>
+          </div>
+
+          <div class="tracks-header"><div><p class="eyebrow">ДОРОЖКИ</p><strong>Многоканальный микс</strong></div><button class="add-track" id="addTrack">＋ Дорожка</button></div>
+          <div class="track-list" id="trackList">
+            <article class="track selected"><button class="track-num">01</button><div class="track-info"><strong>Основной канал</strong><span id="trackType">Аудио · стерео</span></div><div class="waveform" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><button class="mute" title="Отключить звук">M</button><input class="track-volume" type="range" min="0" max="100" value="78" aria-label="Громкость дорожки" /></article>
+          </div>
+        </section>
+
+        <aside class="inspector">
+          <div class="inspector-title"><div><p class="eyebrow">МАСТЕР</p><strong>Звучание</strong></div><span class="green-dot"></span></div>
+          <section class="meter-card"><div class="meter-label"><span>OUTPUT</span><b id="dbValue">−8.4 dB</b></div><div class="meter" id="meter"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><div class="meter-scale"><span>−∞</span><span>0</span></div></section>
+          <section class="effect-section"><div class="section-heading"><span>ЭКВАЛАЙЗЕР</span><button class="toggle active" id="eqToggle" aria-label="Включить эквалайзер"></button></div><canvas id="eqCanvas" width="280" height="105"></canvas><div class="eq-sliders"><label>LOW<input class="eq-control" data-frequency="120" type="range" min="-12" max="12" value="2" /></label><label>MID<input class="eq-control" data-frequency="1000" type="range" min="-12" max="12" value="0" /></label><label>HIGH<input class="eq-control" data-frequency="5000" type="range" min="-12" max="12" value="3" /></label></div></section>
+          <section class="effect-section"><div class="section-heading"><span>ПРОСТРАНСТВО</span><button class="toggle" id="reverbToggle" aria-label="Включить пространство"></button></div><label class="knob-label">ГЛУБИНА <b id="reverbValue">24%</b><input id="reverbControl" type="range" min="0" max="60" value="24" /></label></section>
+          <footer class="format">44.1 kHz <span></span> 24 BIT <span></span> STEREO</footer>
+        </aside>
+      </section>
+    </main>
+    <audio id="audio"></audio>
+    <script src="app.js"></script>
+  </body>
+</html>
