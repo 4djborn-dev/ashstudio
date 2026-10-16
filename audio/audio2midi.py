@@ -47,8 +47,13 @@ def main() -> None:
     )
     src = Path(args.input)
     out = Path(args.out) if args.out else src.with_name(f"{src.stem}_{args.preset}.mid")
+    name = f"{src.stem} ({args.preset})"
+    try:
+        name.encode("latin-1")  # имена дорожек в MIDI не поддерживают кириллицу
+    except UnicodeEncodeError:
+        name = args.preset
     for inst in midi.instruments:
-        inst.name = f"{src.stem} ({args.preset})"
+        inst.name = name
     midi.write(str(out))
     print(f"✓ {out} — нот: {len(notes)}")
 

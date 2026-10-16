@@ -28,7 +28,10 @@ def estimate_key(y: np.ndarray) -> dict:
                 best = (r, i, mode)
     r, i, mode = best
     name = KEY_NAMES[i] + ("m" if mode == "minor" else "")
-    return {"key": name, "tonic": KEY_NAMES[i], "mode": mode, "confidence": round(r, 3)}
+    # параллельная тональность: тот же набор нот (C ↔ Am), автоматика их часто путает
+    rel = KEY_NAMES[(i + 9) % 12] + "m" if mode == "major" else KEY_NAMES[(i + 3) % 12]
+    return {"key": name, "relative": rel, "tonic": KEY_NAMES[i], "mode": mode,
+            "confidence": round(r, 3)}
 
 
 def _bar_phase(beat_frames: np.ndarray, chroma: np.ndarray, low_env: np.ndarray,
@@ -80,10 +83,23 @@ def analyze(audio: np.ndarray, sr: int, beats_per_bar: int = 4, bpm: float | Non
 
     onset_env = librosa.onset.onset_strength(y=y, sr=ANALYSIS_SR, hop_length=hop)
     guess = bpm or estimate_tempo(onset_env, hop)
-    tempo, beat_frames = librosa.beat.beat_track(onset_envelope=onset_env, sr=ANALYSIS_SR,
-                                                 hop_length=hop, units="frames", bpm=guess,
-                                                 tightness=400)
-    tempo = float(bpm or guess)
+    _, beat_frames = librosa.beat.beat_track(onset_envelope=onset_env, sr=ANALYSIS_SR,
+                                             hop_length=hop, units="frames", bpm=guess,
+                                             tightness=400)
+    tempo = float(guess)
+    if not bpm and len(beat_frames) >= 16:
+        # уточнение: темпограмма грубая (шаг ~1 BPM), а ошибка в 1 BPM за минуту
+        # сдвигает сетку на полдоли. Берём наклон прямой через найденные доли.
+        times = librosa.frames_to_time(beat_frames, sr=ANALYSIS_SR, hop_length=hop)
+        period = float(np.polyfit(np.arange(len(times)), times, 1)[0])
+        refined = 60.0 / period
+        if abs(refined - guess) / guess < 0.04:
+            tempo = refined
+            _, beat_frames = librosa.beat.beat_track(onset_envelope=onset_env, sr=ANALYSIS_SR,
+                                                     hop_length=hop, units="frames", bpm=tempo,
+                                                     tightness=400)
+            times = librosa.frames_to_time(beat_frames, sr=ANALYSIS_SR, hop_length=hop)
+            tempo = 60.0 / float(np.polyfit(np.arange(len(times)), times, 1)[0])
     beat_times = librosa.frames_to_time(beat_frames, sr=ANALYSIS_SR, hop_length=hop)
 
     # энергия низов (бочка, бас) — для поиска первой доли такта

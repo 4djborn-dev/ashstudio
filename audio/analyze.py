@@ -39,7 +39,7 @@ def main() -> None:
     print(f"Файл:         {args.input}")
     print(f"Длительность: {res['duration_sec']:.1f} с")
     print(f"Темп:         {res['bpm']:.1f} BPM (такт {60 / res['bpm'] * 4:.2f} с)")
-    print(f"Тональность:  {k['key']} (уверенность {k['confidence']})")
+    print(f"Тональность:  {k['key']} или параллельная {k['relative']} (уверенность {k['confidence']})")
     print(f"Громкость:    {res['loudness']['lufs']} LUFS, пик {res['loudness']['true_peak_dbtp']} dBTP")
     print(f"Тактов: {len(res['bars'])}, сильных акцентов: {len(res['accents'])}")
     for name, segs in res["snippets"].items():

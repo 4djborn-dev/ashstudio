@@ -32,6 +32,8 @@ def main() -> None:
     import demucs.separate  # тяжёлый импорт — только когда нужен
 
     src = Path(args.input)
+    if not src.is_file():
+        raise SystemExit(f"✗ Файл не найден: {src}")
     out_dir = Path(args.out) if args.out else src.with_name(src.stem + "_stems")
     tmp = out_dir / "_demucs"
     cmd = ["-n", args.model, "-o", str(tmp), "-j", str(args.jobs), "--filename", "{stem}.{ext}"]
@@ -48,7 +50,10 @@ def main() -> None:
     demucs.separate.main(cmd)
 
     produced = tmp / args.model
-    for f in sorted(produced.glob("*.*")):
+    files = sorted(produced.glob("*.*"))
+    if not files:
+        raise SystemExit("✗ Demucs не создал ни одного стема — смотри сообщения выше")
+    for f in files:
         ru = NAMES_RU.get(f.stem, f.stem)
         target = out_dir / f"{src.stem}_{ru}{f.suffix}"
         shutil.move(str(f), target)
