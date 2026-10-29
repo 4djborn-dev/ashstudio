@@ -1,0 +1,28 @@
+# Окружения Python
+.venv/
+.venv-midi/
+__pycache__/
+*.pyc
+
+# Звук, видео и результаты обработки НЕ храним в репозитории:
+# он публичный, а файлы клиентов и треки должны оставаться приватными.
+# Готовые файлы — в Google Drive.
+*.wav
+*.mp3
+*.m4a
+*.aac
+*.flac
+*.ogg
+*.aif
+*.aiff
+*.mp4
+*.mov
+*.mkv
+*.webm
+*.mid
+*.midi
+*.als
+*.analysis.json
+*_snippets/
+*_stems/
+work/

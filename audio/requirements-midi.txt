@@ -1,0 +1,4 @@
+# Отдельное окружение для audio2midi.py (Python 3.11): Basic Pitch пока не работает на NumPy 2
+basic-pitch[onnx]>=0.4
+numpy<2
+setuptools<81  # Basic Pitch использует pkg_resources
